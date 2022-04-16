@@ -31,7 +31,7 @@ export function AuthWrapper({ children }: { children: ReactNode }) {
     onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
-  }, []);
+  }, [auth]);
 
   return (
     <AuthContext.Provider value={{ user, auth }}>
