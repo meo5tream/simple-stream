@@ -1,17 +1,12 @@
-import { ReactElement } from 'react';
-import { StreamLayout } from '../../components/StreamLayout';
-import Layout from '../../components/Layout';
+import { useRouter } from 'next/router';
 
-type Props = {};
+import StreamViewer from '../../components/StreamViewer';
 
-export default function StreamIdPage({}: Props) {
-  return <div className="h-12">Stream / WebCam go here!</div>;
-}
+const StreamPage = () => {
+  const router = useRouter();
+  const id = router.query.id as string;
 
-StreamIdPage.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout title="😼 Stream">
-      <StreamLayout>{page}</StreamLayout>
-    </Layout>
-  );
+  return id ? <StreamViewer id={id} /> : <></>;
 };
+
+export default StreamPage;

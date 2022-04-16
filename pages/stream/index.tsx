@@ -1,9 +1,7 @@
-import React from 'react';
+import StartStreamForm from '../../components/StartStreamForm';
 
 type Props = {};
 
-const StreamPage: React.FC<Props> = ({}: Props) => {
-  return <div className="h-12">List Streams go here!</div>;
-};
+const StartStreamPage = ({}: Props) => <StartStreamForm />;
 
-export default StreamPage;
+export default StartStreamPage;
