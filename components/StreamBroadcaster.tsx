@@ -52,7 +52,6 @@ const StreamBroadcaster = ({ id }: Props) => {
     try {
       await peerConnection.setRemoteDescription(viewer.data().localDescription);
 
-      // beforeAnswer
       stream
         .getTracks()
         .forEach((track: any) => peerConnection.addTrack(track, stream));
@@ -75,13 +74,13 @@ const StreamBroadcaster = ({ id }: Props) => {
       );
     } catch (error) {
       peerConnection.close();
-      throw error;
+      console.log(error);
     }
   }, []);
 
   useEffect(() => {
     previewVideo();
-  }, []);
+  }, [previewVideo]);
 
   useEffect(() => {
     viewersSnapshot?.docChanges().forEach((change) => {
@@ -97,7 +96,7 @@ const StreamBroadcaster = ({ id }: Props) => {
           break;
       }
     });
-  }, [viewersSnapshot]);
+  }, [viewersSnapshot, answer]);
 
   if (roomLoading) return <div>Loading...</div>;
   return (

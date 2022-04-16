@@ -7,6 +7,7 @@ import {
   DocumentData,
   DocumentReference,
   onSnapshot,
+  setDoc,
 } from 'firebase/firestore';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
@@ -54,17 +55,18 @@ const StreamViewer = ({ id }: Props) => {
       ),
     });
 
-    onSnapshot(
-      doc(firestore, 'rooms', id, 'viewers', viewerRef.current.id),
-      async (viewer) => {
-        if (viewer.data()?.remoteDescription) {
-          await peerConnection.setRemoteDescription(
-            viewer.data().remoteDescription
-          );
-        }
+    onSnapshot(viewerRef.current, async (viewer) => {
+      if (viewer.data()?.remoteDescription) {
+        await peerConnection.setRemoteDescription(
+          viewer.data().remoteDescription
+        );
+        await setDoc(viewerRef.current, {
+          localDescription: null,
+          remoteDescription: null,
+        });
       }
-    );
-  }, []);
+    });
+  }, [id]);
 
   const disconnect = useCallback(async () => {
     deleteDoc(viewerRef.current);
@@ -75,14 +77,14 @@ const StreamViewer = ({ id }: Props) => {
     return () => {
       disconnect();
     };
-  }, []);
+  }, [connect, disconnect]);
 
   useEffect(() => {
     window.addEventListener('beforeunload', disconnect);
     return () => {
       window.removeEventListener('beforeunload', disconnect);
     };
-  }, []);
+  }, [disconnect]);
 
   return (
     <div>

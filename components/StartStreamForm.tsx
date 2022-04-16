@@ -23,7 +23,7 @@ const StartStreamForm = () => {
 
   const onIsPrivateChange = useCallback(() => {
     setIsPrivate(!isPrivate);
-  }, []);
+  }, [isPrivate]);
 
   const onStartStreamClicked = useCallback(async () => {
     const roomCollection = collection(firestore, 'rooms');
@@ -34,7 +34,7 @@ const StartStreamForm = () => {
       createdAt: Timestamp.fromDate(new Date()),
     });
     router.push(`/stream/${roomDoc.id}/broadcast`);
-  }, []);
+  }, [router, title, user, isPrivate]);
 
   const previewVideo = useCallback(async () => {
     if (!!navigator.mediaDevices.getUserMedia) {
@@ -51,7 +51,7 @@ const StartStreamForm = () => {
 
   useEffect(() => {
     previewVideo();
-  }, []);
+  }, [previewVideo]);
 
   return (
     <Form>
