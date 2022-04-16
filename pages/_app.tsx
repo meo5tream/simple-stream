@@ -1,5 +1,6 @@
 import React, { ReactElement, ReactNode } from 'react';
 import { AppProps } from 'next/app';
+import { NextPage } from 'next';
 
 import 'antd/dist/antd.css';
 import '../styles/index.css';
@@ -10,15 +11,20 @@ const defaultGetLayout = (page: ReactElement) => (
   <Layout title="😼 Stream">{page}</Layout>
 );
 
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
 function MyApp({
   Component,
   pageProps,
-  getLayout = defaultGetLayout,
   getTitle = () => 'Meo Stream',
 }: AppProps & {
-  getLayout: (page: ReactElement) => ReactNode;
+  Component: NextPageWithLayout;
   getTitle: () => string;
 }) {
+  const getLayout = Component.getLayout || defaultGetLayout;
+
   return (
     <>
       <Head>
