@@ -15,7 +15,7 @@ const Layout: React.FC<Props> = ({
     </h2>
 
     <div className="flex flex-col flex-grow p-8 mb-6 bg-gray-100 rounded-xl drop-shadow-2xl">
-      <AuthWrapper>{children}</AuthWrapper>
+      {children}
     </div>
   </div>
 );

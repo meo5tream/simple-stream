@@ -8,6 +8,7 @@ import Head from 'next/head';
 import Layout from '../components/Layout';
 import { FuegoProvider } from 'swr-firestore-v9';
 import { fuego } from '../firebase';
+import { AuthWrapper } from '../components/Auth';
 
 const defaultGetLayout = (page: ReactElement) => (
   <Layout title="😼 Stream">{page}</Layout>
@@ -32,7 +33,7 @@ function MyApp({
       <Head>
         <title>{getTitle()}</title>
       </Head>
-      {getLayout(<Component {...pageProps} />)}
+      <AuthWrapper>{getLayout(<Component {...pageProps} />)}</AuthWrapper>
     </FuegoProvider>
   );
 }
