@@ -10,7 +10,7 @@ const IndexPage = () => (
   <>
     <Greeting />
 
-    <Auth>
+    <Auth noAuthContent={<StreamInfoUnauth />}>
       <div>
         <div className="flex flex-row justify-center w-full m-2 text-center align-middle">
           <StartStreamBtn />
@@ -37,6 +37,17 @@ const StreamingSection = () => {
           <StreamingCard key={room.id} {...room} />
         ))}
       </div>
+    </div>
+  );
+};
+
+const StreamInfoUnauth = () => {
+  const { data = [] } = useCollection<StreamingRoom>('rooms');
+
+  if (!data.length) return null;
+  return (
+    <div className="mt-2 font-light ">
+      Join to stream now or to view {data.length} live streams !
     </div>
   );
 };

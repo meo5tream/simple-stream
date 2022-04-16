@@ -5,8 +5,8 @@ import { StreamingRoom } from '../types';
 export default function StreamingCard({ title, id }: Document<StreamingRoom>) {
   return (
     <a
-      href={`/stream/${id}`}
-      className="flex flex-col items-center justify-center max-w-sm mx-auto border-2 rounded-lg shadow-lg shadow-gray-300 hover:border-blue-300 transition-all"
+      href={`/join/${id}`}
+      className="flex flex-col items-center justify-center max-w-sm mx-auto border-2 rounded-lg shadow-lg shadow-gray-300 hover:border-blue-300 transition-all hover:scale-110"
     >
       <div
         className="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md"

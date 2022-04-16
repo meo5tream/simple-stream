@@ -2,8 +2,8 @@ import React, { ReactElement, ReactNode } from 'react';
 import { AppProps } from 'next/app';
 import { NextPage } from 'next';
 
-import 'antd/dist/antd.css';
 import '../styles/index.css';
+import 'antd/dist/antd.css';
 import Head from 'next/head';
 import Layout from '../components/Layout';
 import { FuegoProvider } from 'swr-firestore-v9';
