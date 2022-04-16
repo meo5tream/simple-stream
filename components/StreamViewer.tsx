@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import {
   addDoc,
   collection,
@@ -12,12 +12,15 @@ import {
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 import { firestore } from '../firebase';
+import { AuthContext } from './Auth';
 
 type Props = {
   id: string;
 };
 
 const StreamViewer = ({ id }: Props) => {
+  const { user } = useContext(AuthContext);
+
   const videoRef = useRef<HTMLVideoElement>();
   const viewerRef = useRef<DocumentReference<DocumentData>>();
 
@@ -25,8 +28,10 @@ const StreamViewer = ({ id }: Props) => {
     useCollectionData(collection(firestore, 'rooms', id, 'viewers'));
 
   const connect = useCallback(async () => {
+    if (!user) return;
+
     const peerConnection = new RTCPeerConnection({
-      sdpSemantics: 'unified-plan',
+      sdpSemantics: 'unified-plan', //newer implementation of WebRTC
     } as any);
 
     peerConnection.ontrack = (event) => {
@@ -49,10 +54,9 @@ const StreamViewer = ({ id }: Props) => {
 
     const viewersCollection = collection(firestore, 'rooms', id, 'viewers');
     viewerRef.current = await addDoc(viewersCollection, {
-      name: 'Test',
-      localDescription: JSON.parse(
-        JSON.stringify(peerConnection.localDescription)
-      ),
+      name: user.displayName,
+      email: user.email,
+      localDescription: peerConnection.localDescription.toJSON(),
     });
 
     onSnapshot(viewerRef.current, async (viewer) => {
@@ -65,11 +69,17 @@ const StreamViewer = ({ id }: Props) => {
           remoteDescription: null,
         });
       }
+      if (viewer.data()?.removeIcecandidate) {
+        await peerConnection.addIceCandidate(viewer.data()?.removeIcecandidate)
+        await setDoc(viewerRef.current, {
+          removeIcecandidate: null,
+        });
+      }
     });
-  }, [id]);
+  }, [id, user]);
 
   const disconnect = useCallback(async () => {
-    deleteDoc(viewerRef.current);
+    if (viewerRef.current) deleteDoc(viewerRef.current);
   }, []);
 
   useEffect(() => {

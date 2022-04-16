@@ -41,13 +41,23 @@ const StreamBroadcaster = ({ id }: Props) => {
     });
 
     const peerConnection = new RTCPeerConnection({
-      sdpSemantics: 'unified-plan',
+      sdpSemantics: 'unified-plan', //newer implementation of WebRTC
     } as any);
 
-    peerConnection.addEventListener('iceconnectionstatechange', (e) => {
-      console.log(`ICE state: ${peerConnection.iceConnectionState}`);
-      console.log('ICE state change event: ', e);
-    });
+    const onIceCandidate = async ({ candidate }) => {
+      await setDoc(
+        viewer.ref,
+        {
+          removeIcecandidate: candidate.toJSON(),
+        },
+        {
+          merge: true,
+        }
+      );
+      peerConnection.removeEventListener('icecandidate', onIceCandidate);
+    };
+
+    peerConnection.addEventListener('icecandidate', onIceCandidate);
 
     try {
       await peerConnection.setRemoteDescription(viewer.data().localDescription);
@@ -61,12 +71,12 @@ const StreamBroadcaster = ({ id }: Props) => {
         type: 'answer',
         sdp: originalAnswer.sdp,
       });
-      await peerConnection.setLocalDescription(updatedAnswer);
+      await peerConnection.setLocalDescription(originalAnswer);
 
       await setDoc(
         viewer.ref,
         {
-          remoteDescription: JSON.parse(JSON.stringify(peerConnection.localDescription)),
+          remoteDescription: peerConnection.localDescription.toJSON(),
         },
         {
           merge: true,
