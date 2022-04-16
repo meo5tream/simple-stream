@@ -45,6 +45,8 @@ const StreamBroadcaster = ({ id }: Props) => {
     } as any);
 
     const onIceCandidate = async ({ candidate }) => {
+      if (!candidate) return;
+
       await setDoc(
         viewer.ref,
         {
