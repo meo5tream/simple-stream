@@ -14,8 +14,9 @@ import {
   signOut,
   User,
 } from 'firebase/auth';
-import firebaseApp from '../firebase';
+import firebaseApp, { firestore } from '../firebase';
 import { Button } from 'antd';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
 
 export const AuthContext = createContext<{ user: User; auth: AuthInterface }>({
   user: null,
@@ -46,7 +47,7 @@ export default function Auth({
   children: ReactNode;
   noAuthContent?: ReactNode;
 }) {
-  const { user, auth } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return <>{user ? children : noAuthContent}</>;
 }
@@ -55,7 +56,13 @@ export const Greeting = () => {
   const { user, auth } = useContext(AuthContext);
 
   const doLogin = async () => {
-    await signInWithPopup(auth, new GoogleAuthProvider());
+    const result = await signInWithPopup(auth, new GoogleAuthProvider());
+    if (result.user) {
+      const userDoc = doc(firestore, 'users', result.user.email);
+      setDoc(userDoc, {
+        lastLogin: Timestamp.fromDate(new Date()),
+      });
+    }
   };
 
   if (!user)
