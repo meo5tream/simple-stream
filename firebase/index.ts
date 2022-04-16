@@ -1,6 +1,7 @@
-import { initializeApp } from 'firebase/app';
+import firebase, { initializeApp } from 'firebase/app';
 import 'firebase/firestore';
 import { getFirestore } from 'firebase/firestore';
+import { Fuego } from 'swr-firestore-v9';
 
 const clientCredentials = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,6 +13,8 @@ const clientCredentials = {
 };
 
 const app = initializeApp(clientCredentials);
+
 export const firestore = getFirestore(app);
+export const fuego = new Fuego(clientCredentials);
 
 export default app;

@@ -4,7 +4,7 @@ export default function StartStreamBtn() {
   return (
     <a
       href="/stream"
-      className="relative flex items-center h-12 px-6 overflow-hidden rounded-full group space-x-2 bg-gradient-to-r from-pink-500 to-purple-500 hover:to-purple-600"
+      className="relative flex items-center h-12 px-6 overflow-hidden rounded-full duration-300 transition-all group space-x-2 bg-gradient-to-r from-pink-500 to-purple-500 hover:to-purple-600"
     >
       <span className="relative text-sm text-white">Stream NOW!</span>
       <div className="flex items-center -space-x-3 translate-x-3">
