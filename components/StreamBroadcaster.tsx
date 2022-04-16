@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { collection, doc, onSnapshot, setDoc } from 'firebase/firestore';
 import {
   useDocumentData,
   useCollectionData,
@@ -50,7 +50,7 @@ const StreamBroadcaster = ({ id }: Props) => {
       await setDoc(
         viewer.ref,
         {
-          removeIcecandidate: candidate.toJSON(),
+          remoteIcecandidate: candidate.toJSON(),
         },
         {
           merge: true,
@@ -58,8 +58,16 @@ const StreamBroadcaster = ({ id }: Props) => {
       );
       peerConnection.removeEventListener('icecandidate', onIceCandidate);
     };
-
     peerConnection.addEventListener('icecandidate', onIceCandidate);
+
+    onSnapshot(viewer.ref, async (viewer) => {
+      if (viewer.data()?.localIcecandidate) {
+        await peerConnection.addIceCandidate(viewer.data()?.localIcecandidate);
+        await setDoc(viewer.ref, {
+          localIcecandidate: null,
+        });
+      }
+    });
 
     try {
       await peerConnection.setRemoteDescription(viewer.data().localDescription);

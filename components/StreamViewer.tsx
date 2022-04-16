@@ -41,6 +41,22 @@ const StreamViewer = ({ id }: Props) => {
       }
     };
 
+    const onIceCandidate = async ({ candidate }) => {
+      if (!candidate || !viewerRef.current) return;
+
+      await setDoc(
+        viewerRef.current,
+        {
+          localIcecandidate: candidate.toJSON(),
+        },
+        {
+          merge: true,
+        }
+      );
+      peerConnection.removeEventListener('icecandidate', onIceCandidate);
+    };
+    peerConnection.addEventListener('icecandidate', onIceCandidate);
+
     peerConnection.addEventListener('iceconnectionstatechange', (e) => {
       console.log(`ICE state: ${peerConnection.iceConnectionState}`);
       console.log('ICE state change event: ', e);
@@ -69,10 +85,10 @@ const StreamViewer = ({ id }: Props) => {
           remoteDescription: null,
         });
       }
-      if (viewer.data()?.removeIcecandidate) {
-        await peerConnection.addIceCandidate(viewer.data()?.removeIcecandidate)
+      if (viewer.data()?.remoteIcecandidate) {
+        await peerConnection.addIceCandidate(viewer.data()?.remoteIcecandidate);
         await setDoc(viewerRef.current, {
-          removeIcecandidate: null,
+          remoteIcecandidate: null,
         });
       }
     });
